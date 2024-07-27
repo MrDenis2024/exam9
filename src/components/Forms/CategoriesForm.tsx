@@ -33,7 +33,7 @@ const CategoriesForm: React.FC<Props> = ({onSubmit, isLoading, existingCategory}
 
   return (
     <form className='border rounded mt-5 border-black p-4' onSubmit={onFormSubmit}>
-      <h4>New dish</h4>
+      <h4>{existingCategory ? ('Edit category') : ('New category')}</h4>
       <div className='form-group mb-3'>
         <label htmlFor='name'>Category name</label>
         <input type="text" name="name" id="name" className='form-control' onChange={changeCategories}
