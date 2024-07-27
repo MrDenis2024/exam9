@@ -21,7 +21,7 @@ const emptyState: TransactionMutation = {
 const TransactionFrom: React.FC<Props> = ({onSubmit, isLoading, existingTransaction}) => {
   const categories = useAppSelector(selectorCategories);
   const category =  existingTransaction && categories.filter(category => category.id === existingTransaction.category);
-  const initialState: TransactionMutation = existingTransaction && category ? {...existingTransaction, category: category[0].type, categoryName: category[0].name, amount: existingTransaction.amount.toString() } : emptyState;
+  const initialState: TransactionMutation = existingTransaction && category ? {category: category[0].type, categoryName: category[0].name, amount: existingTransaction.amount.toString(), createdAt: existingTransaction.createdAt } : emptyState;
   const dispatch = useAppDispatch();
   const [transaction, setTransaction] = useState(initialState);
   const incomeCategories = categories.filter(category => category.type === 'income');
