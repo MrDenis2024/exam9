@@ -1,36 +1,39 @@
-import {useEffect, useState} from 'react';
-import Modal from '../../components/Modal/Modal';
-import CategoriesForm from '../../components/Forms/CategoriesForm';
-import {CategoryMutation} from '../../types';
+import {useEffect} from 'react';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {createCategories, fetchCategories} from '../../store/categoriesThunks';
+import {deleteCategory, fetchCategories} from '../../store/categoriesThunks';
 import {toast} from 'react-toastify';
-import {selectorCategories, selectorCreateLoading, selectorFetchCategoriesLoading} from '../../store/categoriesSlice';
+import {
+  selectorCategories,
+  selectorDeleteCategoryLoading,
+  selectorFetchCategoriesLoading
+} from '../../store/categoriesSlice';
 import Spinner from '../../components/Spinner/Spinner';
 import Category from '../../components/Category/Category';
+import {Link} from 'react-router-dom';
 
 
 const Categories = () => {
-  const [showModal, setShowModal] = useState(false);
   const dispatch = useAppDispatch();
-  const createLoading = useAppSelector(selectorCreateLoading);
   const categories = useAppSelector(selectorCategories);
   const fetchLoading = useAppSelector(selectorFetchCategoriesLoading);
+  const deleteLoading = useAppSelector(selectorDeleteCategoryLoading);
+
 
   useEffect(() => {
     dispatch(fetchCategories());
   }, [dispatch]);
 
-  const onSubmit = async (category: CategoryMutation) => {
+  const removeCategory = async (categoryId: string) => {
     try {
-      await dispatch(createCategories(category)).unwrap();
-      setShowModal(false);
-      toast.success('Категоря успешно отправлена');
+      if(window.confirm('Вы точно хотите удалить данную категорию?')) {
+        await dispatch(deleteCategory(categoryId));
+        await dispatch(fetchCategories());
+        toast.success('Вы успешно удалили категорию');
+      }
     } catch (e) {
-      toast.error('Произошла ошибка отправки категории');
+      toast.error('Произошла ошибка удаления категории');
     }
   };
-
 
   return (
     <>
@@ -38,21 +41,16 @@ const Categories = () => {
         <div className='mt-5'>
           <div className='d-flex align-items-center justify-content-between mb-3'>
             <h1>Categories</h1>
-            <button className='btn btn-success' onClick={() => setShowModal(true)}>Add</button>
+            <Link className='btn btn-success' to={'/category-add'}>Add</Link>
           </div>
           {fetchLoading ? (<div className='text-center'><Spinner /></div>
           ) : (
             categories.map((category) => (
-              <Category key={category.id} category={category} />
+              <Category key={category.id} category={category} onDelete={() => removeCategory(category.id)} deleteLoading={deleteLoading} />
             ))
           )}
         </div>
       </div>
-      <Modal show={showModal} onClose={() => setShowModal(false)}>
-        <div className='modal-body'>
-          <CategoriesForm onSubmit={onSubmit} closeModal={() => setShowModal(false)} isLoading={createLoading}/>
-        </div>
-      </Modal>
     </>
   );
 };

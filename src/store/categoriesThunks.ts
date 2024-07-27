@@ -1,5 +1,5 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import {ApiDishes, Category, CategoryMutation} from '../types';
+import {ApiDishes, CategoryMutation, ICategory} from '../types';
 import {RootState} from '../app/store';
 import axiosApi from '../axiosApi';
 
@@ -7,7 +7,7 @@ export const createCategories = createAsyncThunk<void, CategoryMutation, {state:
   await axiosApi.post('/categories.json', category);
 });
 
-export const fetchCategories = createAsyncThunk<Category[], void, {state: RootState}>('categories/fetchCategories', async () => {
+export const fetchCategories = createAsyncThunk<ICategory[], void, {state: RootState}>('categories/fetchCategories', async () => {
   const {data: categoriesResponse} = await axiosApi.get<ApiDishes | null>('/categories.json');
 
   if(categoriesResponse === null) {
@@ -20,4 +20,27 @@ export const fetchCategories = createAsyncThunk<Category[], void, {state: RootSt
       id,
     };
   });
+});
+
+export const deleteCategory = createAsyncThunk<void, string, {state: RootState}>('categories/delete', async (id) => {
+  await axiosApi.delete(`/categories/${id}.json`);
+});
+
+export const fetchOneCategory = createAsyncThunk<CategoryMutation, string, {state: RootState}>('categories/fetchOne', async (id) => {
+  const {data: categoryResponse} = await axiosApi.get<CategoryMutation | null>(`/categories/${id}.json`);
+
+  if(categoryResponse === null) {
+    throw new Error('Not found');
+  }
+
+  return categoryResponse;
+});
+
+export interface UpdateCategoryArg {
+  id: string;
+  category: CategoryMutation;
+}
+
+export const updateCategory = createAsyncThunk<void, UpdateCategoryArg, {state: RootState}>('categories/update', async ({id, category}) => {
+  await axiosApi.put(`/categories/${id}.json`, category);
 });
