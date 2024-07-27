@@ -8,6 +8,7 @@ import ButtonSpinner from '../Spinner/ButtonSpinner';
 interface Props {
   onSubmit: (transaction: ApiTransaction) => void
   isLoading: boolean;
+  existingTransaction? : ApiTransaction;
 }
 
 const emptyState: TransactionMutation = {
@@ -17,10 +18,12 @@ const emptyState: TransactionMutation = {
   createdAt: '',
 } ;
 
-const TransactionFrom: React.FC<Props> = ({onSubmit, isLoading}) => {
-  const dispatch = useAppDispatch();
+const TransactionFrom: React.FC<Props> = ({onSubmit, isLoading, existingTransaction}) => {
   const categories = useAppSelector(selectorCategories);
-  const [transaction, setTransaction] = useState(emptyState);
+  const category =  existingTransaction && categories.filter(category => category.id === existingTransaction.category);
+  const initialState: TransactionMutation = existingTransaction && category ? {...existingTransaction, category: category[0].type, categoryName: category[0].name, amount: existingTransaction.amount.toString() } : emptyState;
+  const dispatch = useAppDispatch();
+  const [transaction, setTransaction] = useState(initialState);
   const incomeCategories = categories.filter(category => category.type === 'income');
   const expenseCategories =   categories.filter(category => category.type === 'expense');
 
@@ -54,7 +57,7 @@ const TransactionFrom: React.FC<Props> = ({onSubmit, isLoading}) => {
 
   return (
     <form className='border rounded mt-5 border-black p-4' onSubmit={onFormSubmit}>
-      <h4>New transaction</h4>
+      <h4>{existingTransaction ? ('Edit transaction') : ('New transaction')}</h4>
       <div className="form-group mb-3">
         <label htmlFor="category">Category</label>
         <select id="category" className="form-control" name="category" value={transaction.category}

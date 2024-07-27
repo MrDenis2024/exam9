@@ -14,10 +14,33 @@ export const fetchTransactions = createAsyncThunk<Transaction[], void, {state: R
     return [];
   }
 
-  return Object.keys(transactionsResponse).map((id) => {
+  return Object.keys(transactionsResponse).reverse().map((id) => {
     return {
       ...transactionsResponse[id],
       id,
     };
   });
+});
+
+export const deleteTransaction = createAsyncThunk<void, string, {state: RootState}>('transactions/delete', async (id) => {
+  await axiosApi.delete(`/transaction/${id}.json`);
+});
+
+export const fetchOneTransaction = createAsyncThunk<ApiTransaction, string, {state: RootState}>('transactions/fetchOne', async (id) => {
+  const {data: transactionResponse} = await axiosApi.get<ApiTransaction | null>(`/transaction/${id}.json`);
+
+  if(transactionResponse === null) {
+    throw new Error('Not found');
+  }
+
+  return transactionResponse;
+});
+
+export interface UpdateTransactionArg {
+  id: string;
+  transaction: ApiTransaction;
+}
+
+export const updateTransaction = createAsyncThunk<void, UpdateTransactionArg, {state: RootState}>('categories/update', async ({id, transaction}) => {
+  await axiosApi.put(`/transaction/${id}.json`, transaction);
 });

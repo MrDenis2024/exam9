@@ -30,6 +30,7 @@ const EditCategory = () => {
     }
   };
 
+
   return (
     <div>
       {isFetching && <div className='text-center'><Spinner /></div>}
