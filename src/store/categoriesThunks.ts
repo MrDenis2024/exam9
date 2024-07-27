@@ -1,5 +1,5 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import {ApiDishes, CategoryMutation, ICategory} from '../types';
+import {ApiCategories, CategoryMutation, ICategory} from '../types';
 import {RootState} from '../app/store';
 import axiosApi from '../axiosApi';
 
@@ -8,7 +8,7 @@ export const createCategories = createAsyncThunk<void, CategoryMutation, {state:
 });
 
 export const fetchCategories = createAsyncThunk<ICategory[], void, {state: RootState}>('categories/fetchCategories', async () => {
-  const {data: categoriesResponse} = await axiosApi.get<ApiDishes | null>('/categories.json');
+  const {data: categoriesResponse} = await axiosApi.get<ApiCategories | null>('/categories.json');
 
   if(categoriesResponse === null) {
     return [];

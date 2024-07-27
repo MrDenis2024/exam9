@@ -9,7 +9,7 @@ export interface CategoryMutation {
   type: string;
 }
 
-export interface ApiDishes {
+export interface ApiCategories {
   [id: string]: CategoryMutation;
 }
 
@@ -26,4 +26,16 @@ export interface TransactionMutation {
   category: string,
   categoryName: string,
   amount: string,
+  createdAt: string,
+}
+
+export interface ApiTransactions {
+  [id: string]: ApiTransaction,
+}
+
+export interface Transactions {
+  id: string;
+  amount: number,
+  createdAt: string,
+  category: ICategory;
 }

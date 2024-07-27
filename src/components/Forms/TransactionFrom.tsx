@@ -14,6 +14,7 @@ const emptyState: TransactionMutation = {
   category: '',
   categoryName: '',
   amount: '',
+  createdAt: '',
 } ;
 
 const TransactionFrom: React.FC<Props> = ({onSubmit, isLoading}) => {
@@ -44,7 +45,7 @@ const TransactionFrom: React.FC<Props> = ({onSubmit, isLoading}) => {
       const updatedTransaction: ApiTransaction = {
         amount: parseFloat(transaction.amount),
         category: transactionCategory.id,
-        createdAt: now.toISOString(),
+        createdAt: transaction.createdAt || now.toISOString(),
       };
       onSubmit(updatedTransaction);
     }
