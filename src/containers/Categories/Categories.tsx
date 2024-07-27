@@ -1,19 +1,27 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Modal from '../../components/Modal/Modal';
 import CategoriesForm from '../../components/Forms/CategoriesForm';
-import {Category} from '../../types';
+import {CategoryMutation} from '../../types';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {createCategories} from '../../store/categoriesThunks';
+import {createCategories, fetchCategories} from '../../store/categoriesThunks';
 import {toast} from 'react-toastify';
-import {selectorCreateLoading} from '../../store/categoriesSlice';
+import {selectorCategories, selectorCreateLoading, selectorFetchCategoriesLoading} from '../../store/categoriesSlice';
+import Spinner from '../../components/Spinner/Spinner';
+import Category from '../../components/Category/Category';
 
 
 const Categories = () => {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useAppDispatch();
   const createLoading = useAppSelector(selectorCreateLoading);
+  const categories = useAppSelector(selectorCategories);
+  const fetchLoading = useAppSelector(selectorFetchCategoriesLoading);
 
-  const onSubmit = async (category: Category) => {
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
+  const onSubmit = async (category: CategoryMutation) => {
     try {
       await dispatch(createCategories(category)).unwrap();
       setShowModal(false);
@@ -23,14 +31,21 @@ const Categories = () => {
     }
   };
 
+
   return (
     <>
       <div className='mt-5'>
         <div className='mt-5'>
-          <div className='d-flex align-items-center justify-content-between'>
+          <div className='d-flex align-items-center justify-content-between mb-3'>
             <h1>Categories</h1>
             <button className='btn btn-success' onClick={() => setShowModal(true)}>Add</button>
           </div>
+          {fetchLoading ? (<div className='text-center'><Spinner /></div>
+          ) : (
+            categories.map((category) => (
+              <Category key={category.id} category={category} />
+            ))
+          )}
         </div>
       </div>
       <Modal show={showModal} onClose={() => setShowModal(false)}>

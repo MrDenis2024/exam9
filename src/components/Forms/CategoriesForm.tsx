@@ -1,20 +1,20 @@
 import React, {MouseEventHandler, useState} from 'react';
-import {Category} from '../../types';
+import {CategoryMutation} from '../../types';
 import ButtonSpinner from '../Spinner/ButtonSpinner';
 
 interface Props {
-  onSubmit: (category: Category) => void;
+  onSubmit: (category: CategoryMutation) => void;
   closeModal: MouseEventHandler
   isLoading: boolean;
 }
 
-const emptyState: Category  = {
+const emptyState: CategoryMutation  = {
   name: '',
   type: '',
 };
 
 const CategoriesForm: React.FC<Props> = ({onSubmit, closeModal, isLoading}) => {
-  const [categories, setCategories] = useState(emptyState);
+  const [categories, setCategories] = useState<CategoryMutation>(emptyState);
 
   const changeCategories = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const {name, value} = event.target;
@@ -40,8 +40,7 @@ const CategoriesForm: React.FC<Props> = ({onSubmit, closeModal, isLoading}) => {
       </div>
       <div className='form-group mb-3'>
         <label htmlFor='type'>Category type</label>
-        <select id="type"  className="form-control" name="type" value={categories.type} onChange={changeCategories}
-                required>
+        <select id="type"  className="form-control" name="type" value={categories.type} onChange={changeCategories} required>
           <option value="">Select a category type</option>
           <option value="income">Income</option>
           <option value="expense">Expense</option>
